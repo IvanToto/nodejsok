@@ -26,9 +26,15 @@ wss.on('connection', ws => {
        //console.log(data);
      });
     }
+    if(comandos[0]==='CONN'){
+     server.getConnections(function(error,count){
+      console.log('Number of concurrent connections to the server : ' + count);
+     });
+    }
     ws.send('Se ha recibido el mensaje')
   })
 })
+
 
 //Montaje de TCP/IP Socket en puerto 443
 const net = require('net');
@@ -41,11 +47,12 @@ var socketcount = 1;
 server.on('connection', (socket)=>{
     socket.on('data', (data)=>{
         console.log('\nEl cliente ' + socket.remoteAddress + ": " + socket.remotePort + "dice: " + data)
-        const datavals = data.split('*');
+        let indata = String(data).split('*');
         const d = new Date();
         const dc = new Date(d.valueOf() - 21600000 + 3600000);
-        var respuesta = 'PingPing ' + dc.toLocaleString() + 'id: '+data[1];
+        var respuesta = 'PingPing ' + dc.toLocaleString()+',id: '+indata[1];
         socket.write(respuesta);
+        allSockets[indata[1]]=socket;
     })
 
     socket.on('close', ()=>{
@@ -55,17 +62,18 @@ server.on('connection', (socket)=>{
     socket.on('error', (err)=>{
         console.log(err.message)
     })
-    //socket.id = Math.floor(Math.random() * 1000);
+    socket.id = Math.floor(Math.random() * 1000);
+    console.log( typeof(socket._handle));
     socketId = socket._handle.fd;
     console.log(socketId);
     console.log(socket);
-    allSockets[String(socketcount)]=socket;
+    //allSockets[String(socketcount)]=socket;
     socketcount = socketcount + 1;
     // console.log(socket._handle.fd);
 })
 
 server.listen(tcpPort, ()=>{
-    console.log('El servicor TCP/IP esta escuchando en la puerta', server.address().port)
+    console.log('servidor esta escuchando en la puerta', server.address().port)
 })
 
 /*
