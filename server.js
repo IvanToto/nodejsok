@@ -41,9 +41,10 @@ var socketcount = 1;
 server.on('connection', (socket)=>{
     socket.on('data', (data)=>{
         console.log('\nEl cliente ' + socket.remoteAddress + ": " + socket.remotePort + "dice: " + data)
+        const datavals = data.split('*');
         const d = new Date();
         const dc = new Date(d.valueOf() - 21600000 + 3600000);
-        var respuesta = 'PingPing ' + dc.toLocaleString();
+        var respuesta = 'PingPing ' + dc.toLocaleString() + 'id: '+data[1];
         socket.write(respuesta);
     })
 
@@ -54,8 +55,7 @@ server.on('connection', (socket)=>{
     socket.on('error', (err)=>{
         console.log(err.message)
     })
-    socket.id = Math.floor(Math.random() * 1000);
-    console.log( typeof(socket._handle));
+    //socket.id = Math.floor(Math.random() * 1000);
     socketId = socket._handle.fd;
     console.log(socketId);
     console.log(socket);
@@ -65,11 +65,11 @@ server.on('connection', (socket)=>{
 })
 
 server.listen(tcpPort, ()=>{
-    console.log('servidor esta escuchando en la puerta', server.address().port)
+    console.log('El servicor TCP/IP esta escuchando en la puerta', server.address().port)
 })
 
-//setInterval(myTimer, 22000);
-
+/*
+setInterval(myTimer, 22000);
 function myTimer() {
   server.getConnections(function(error,count){
     console.log('Number of concurrent connections to the server : ' + count);
@@ -85,3 +85,4 @@ function myTimer() {
    //console.log(data);
   });
 }
+*/
